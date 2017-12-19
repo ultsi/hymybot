@@ -1,0 +1,23 @@
+{
+  "name": "hymybot",
+  "version": "1.0.0",
+  "description": "A simple bot with a few commands for a telegram group",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ultsi/hymybot.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot"
+  ],
+  "author": "Joonas Ulmanen",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/ultsi/hymybot/issues"
+  },
+  "homepage": "https://github.com/ultsi/hymybot#readme"
+}
