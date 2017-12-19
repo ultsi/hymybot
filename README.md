@@ -1,6 +1,6 @@
 # Hymybot
 
-A simple Telegram bot with couple fun commands for a private group.
+A simple Telegram bot with couple fun commands for a private group. Reuses functionality from BläkkisVuohi bot.
 
 Commands include:
 
