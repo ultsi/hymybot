@@ -23,7 +23,7 @@
 
 'use strict';
 
-const CommandsAPI = require('telegram-bot-cmd-api')(process.env.TOKEN, process.env.BOT_MODE);
+const CommandsAPI = require('telegram-bot-cmd-api')(process.env.TOKEN, process.env.BOT_MODE, process.env.APP_URL);
 const when = require('when');
 const markov = require('./markov.js')(2);
 const query = require('pg-query');
