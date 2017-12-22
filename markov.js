@@ -59,5 +59,15 @@ module.exports = (order) => {
         return m_keys[Math.floor(Math.random()*m_keys.length)];
     };
 
+    markov.findKeyFromData = (data) => {
+        for(let i=0; i < data.length-order+1; i += 1){
+            let orderTuple = data.slice(i, i+order).join(markov.delimiter);
+            if(m_data[orderTuple]){
+                return orderTuple;
+            }
+        }
+        return false;
+    };
+
     return markov;
 };

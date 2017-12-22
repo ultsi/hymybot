@@ -25,7 +25,7 @@
 
 const CommandsAPI = require('telegram-bot-cmd-api')(process.env.TOKEN, process.env.BOT_MODE, process.env.APP_URL);
 const when = require('when');
-const markov = require('./markov.js')(2);
+const markov = require('./markov.js')(1);
 const query = require('pg-query');
 query.connectionParameters = process.env.DATABASE_URL;
 
@@ -35,7 +35,7 @@ CommandsAPI.cmdFailText = 'Virhe! Komennon ohje: ';
 
 CommandsAPI.otherwise = (msg, words, bot) => {
     let deferred = when.defer();
-    if(words.length < 3){
+    if(words.length < 2){
         deferred.resolve();
         return deferred.promise;
     }
@@ -50,6 +50,11 @@ CommandsAPI.otherwise = (msg, words, bot) => {
             console.log('error while saving message to db');
             console.log(err);
         });
+
+    let startWords = markov.findKeyFromData(words);
+    if(startWords){
+        bot.sendMessage(msg.chat.id, startWords + ' ' + markov.generate(startWords, 20).join(' '));
+    }
 
     deferred.resolve();
     return deferred.promise;
