@@ -43,7 +43,7 @@ CommandsAPI.otherwise = (msg, words, bot) => {
     markov.seed(words);
 
     // save the message to db
-    query('insert into msgs values ($1)', [words.join(markov.delimiter)])
+    query('insert into msgs (msg) values ($1)', [words.join(markov.delimiter)])
         .then(() => {
 
         }, (err) => {
@@ -59,10 +59,9 @@ CommandsAPI.otherwise = (msg, words, bot) => {
 
 query('select msg from msgs')
 .then((res) => {
-    console.log(res);
     let msgs = res[0];
     for(let i in msgs){
-        let words = msgs[i].split(markov.delimiter);
+        let words = msgs[i].msg.split(markov.delimiter);
         markov.seed(words);
     }
     console.log('seeded with ' + msgs.length + ' messages');
