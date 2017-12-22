@@ -42,7 +42,8 @@ CommandsAPI.otherwise = (msg, words, bot) => {
     words = words.map(w => w.toLowerCase());
 
     let start = markov.findKeyFromData(words);
-    if(start){
+    let lottery = Math.random() * 10;
+    if(start && lottery > 7){
         bot.sendMessage(msg.chat.id, start + ' ' + markov.generate(start, 20).join(' '));
     }
 

@@ -45,8 +45,6 @@ module.exports = (order) => {
         let generated = [];
         let nextKey = key;
         while(m_data[nextKey] && counter < limit){
-            console.log(counter, generated);
-            console.log(nextKey);
             counter += 1;
             let nextItem = m_data[nextKey][Math.floor(Math.random()*m_data[nextKey].length)];
             generated.push(nextItem);
