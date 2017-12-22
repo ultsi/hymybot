@@ -40,6 +40,12 @@ CommandsAPI.otherwise = (msg, words, bot) => {
         return deferred.promise;
     }
     words = words.map(w => w.toLowerCase());
+
+    let start = markov.findKeyFromData(words);
+    if(start){
+        bot.sendMessage(msg.chat.id, start + ' ' + markov.generate(start, 20).join(' '));
+    }
+
     markov.seed(words);
 
     // save the message to db
@@ -51,10 +57,6 @@ CommandsAPI.otherwise = (msg, words, bot) => {
             console.log(err);
         });
 
-    let startWords = markov.findKeyFromData(words);
-    if(startWords){
-        bot.sendMessage(msg.chat.id, startWords + ' ' + markov.generate(startWords, 20).join(' '));
-    }
 
     deferred.resolve();
     return deferred.promise;

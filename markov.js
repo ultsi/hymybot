@@ -50,7 +50,11 @@ module.exports = (order) => {
             counter += 1;
             let nextItem = m_data[nextKey][Math.floor(Math.random()*m_data[nextKey].length)];
             generated.push(nextItem);
-            nextKey = nextKey.split(markov.delimiter).slice(1, markov.order).join(markov.delimiter) + markov.delimiter + nextItem;
+            if (order > 1) {
+                nextKey = nextKey.split(markov.delimiter).slice(1, markov.order).join(markov.delimiter) + markov.delimiter + nextItem;
+            } else {
+                nextKey = nextItem;
+            }
         }
         return generated;
     };
@@ -60,7 +64,7 @@ module.exports = (order) => {
     };
 
     markov.findKeyFromData = (data) => {
-        for(let i=0; i < data.length-order+1; i += 1){
+        for(let i=0; i < data.length-order; i += 1){
             let orderTuple = data.slice(i, i+order).join(markov.delimiter);
             if(m_data[orderTuple]){
                 return orderTuple;
