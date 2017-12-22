@@ -18,39 +18,55 @@
 
 /*
     index.js
-    Main entrypoint, initialize tg-bot and then start to initialize 
-    the possible web server and finally the app.
+    Main entrypoint
 */
 
 'use strict';
 
-const TOKEN = process.env.TOKEN;
+const CommandsAPI = require('telegram-bot-cmd-api')(process.env.TOKEN, process.env.BOT_MODE);
+const when = require('when');
+const markov = require('./markov.js')(2);
+const query = require('pg-query');
+query.connectionParameters = process.env.DATABASE_URL;
 
-const Bot = require('node-telegram-bot-api');
-const BOT_MODE = process.env.BOT_MODE || 'polling';
-const log = require('loglevel').getLogger('system');
+CommandsAPI.helpText = 'Moi, olen Hymybot. Olen käytettävissä vain HYMY-ryhmässä privaatisti.';
+CommandsAPI.privateCommandNoticeText = 'Käytä tätä komentoa vain minun kanssa!';
+CommandsAPI.cmdFailText = 'Virhe! Komennon ohje: ';
 
-// Setup bot
-let bot;
+CommandsAPI.otherwise = (msg, words, bot) => {
+    let deferred = when.defer();
+    if(words.length < 3){
+        deferred.resolve();
+        return deferred.promise;
+    }
+    words = words.map(w => w.toLowerCase());
+    markov.seed(words);
 
-if (BOT_MODE === 'polling') {
-    const botOptions = {
-        polling: true // used when no HTTPS:// connection available
-    };
-    bot = new Bot(TOKEN, botOptions);
-} else {
-    bot = new Bot(TOKEN);
+    // save the message to db
+    query('insert into msgs values ($1)', [words.join(markov.delimiter)])
+        .then(() => {
 
-    // This informs the Telegram servers of the new webhook.
-    // Note: we do not need to pass in the cert, as it already provided
-    // bot.setWebHook(`${url}/bot${TOKEN}`);
-    bot.setWebHook(process.env.APP_URL + TOKEN);
+        }, (err) => {
+            console.log('error while saving message to db');
+            console.log(err);
+        });
 
-    // Load web server
-    require('./web.js')(bot, TOKEN);
-}
+    deferred.resolve();
+    return deferred.promise;
+};
 
-// Load app
-require('./app/init.js')(bot);
+/* seed the markov chain from db */
 
-log.info('Hymybot started in ' + BOT_MODE + ' mode');
+query('select msg from msgs')
+.then((res) => {
+    console.log(res);
+    let msgs = res[0];
+    for(let i in msgs){
+        let words = msgs[i].split(markov.delimiter);
+        markov.seed(words);
+    }
+    console.log('seeded with ' + msgs.length + ' messages');
+}, (err) => {
+    console.log('Error while seeding markov chain from db');
+    console.log(err);
+});
