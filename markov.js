@@ -26,6 +26,7 @@
 module.exports = (order) => {
     let markov = {order: order, delimiter: ' '};
     let m_keys = [];
+    let m_partial_keys = {};
     let m_data = {};
 
     markov.seed = (data) => {
@@ -35,6 +36,13 @@ module.exports = (order) => {
                 m_data[orderTuple] = [];
                 m_data._length += 1;
                 m_keys.push(orderTuple);
+                let orderKeys = orderTuple.split(markov.delimiter);
+                for(let k in orderKeys) {
+                    if(!m_partial_keys[k]) {
+                        m_partial_keys[k] = [];
+                    }
+                    m_partial_keys[k].push(orderTuple);
+                }
             }
             m_data[orderTuple].push(data[i+order]);
         }
@@ -62,12 +70,14 @@ module.exports = (order) => {
     };
 
     markov.findPartialKeyFromData = (data) => {
-        for (let i in m_keys) {
-            let splitKey = m_keys[i].split(markov.delimiter);
-            if (data.find(d => splitKey.find(s => s === d))) {
-                return m_keys[i];
+        let found = [];
+        for (let i in data) {
+            let point = data[i];
+            if(m_partial_keys[point]){
+                found.concat(m_partial_keys[point]);
             }
         }
+        return found[Math.floor(Math.random()*found.length)];
     };
 
     markov.findExactKeyFromData = (data) => {
