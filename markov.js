@@ -61,7 +61,16 @@ module.exports = (order) => {
         return m_keys[Math.floor(Math.random()*m_keys.length)];
     };
 
-    markov.findKeyFromData = (data) => {
+    markov.findPartialKeyFromData = (data) => {
+        for (let i in m_keys) {
+            let splitKey = m_keys[i].split(markov.delimiter);
+            if (data.find(d => splitKey.find(s => s === d))) {
+                return m_keys[i];
+            }
+        }
+    };
+
+    markov.findExactKeyFromData = (data) => {
         for(let i=0; i < data.length-order; i += 1){
             let orderTuple = data.slice(i, i+order).join(markov.delimiter);
             if(m_data[orderTuple]){

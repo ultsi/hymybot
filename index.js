@@ -36,20 +36,22 @@ CommandsAPI.cmdFailText = 'Virhe! Komennon ohje: ';
 
 CommandsAPI.otherwise = (msg, words, bot) => {
     let deferred = when.defer();
+    words = words.map(w => w.toLowerCase());
+
+    let start = markov.findPartialKeyFromData(words);
     let lottery = Math.random();
-    if(lottery > 0.95){
-        let start = markov.randomKey();
+    if(start && lottery > 0.7){
         bot.sendMessage(msg.chat.id, start + ' ' + markov.generate(start, 15).join(' '));
     }
+
+    // save the message to db
     if(words.length < order + 1){
         deferred.resolve();
         return deferred.promise;
     }
-    words = words.map(w => w.toLowerCase());
 
     markov.seed(words);
 
-    // save the message to db
     query('insert into msgs (msg) values ($1)', [words.join(markov.delimiter)])
         .then(() => {
 
