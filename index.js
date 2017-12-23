@@ -40,6 +40,7 @@ CommandsAPI.otherwise = (msg, words, bot) => {
 
     let start = markov.findPartialKeyFromData(words);
     let lottery = Math.random();
+    console.log(start, lottery);
     if(start && lottery > 0.7){
         bot.sendMessage(msg.chat.id, start + ' ' + markov.generate(start, 15).join(' '));
     }
