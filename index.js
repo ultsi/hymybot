@@ -25,7 +25,8 @@
 
 const CommandsAPI = require('telegram-bot-cmd-api')(process.env.TOKEN, process.env.BOT_MODE, process.env.APP_URL);
 const when = require('when');
-const markov = require('./markov.js')(1);
+const order = 2;
+const markov = require('./markov.js')(order);
 const query = require('pg-query');
 query.connectionParameters = process.env.DATABASE_URL;
 
@@ -35,7 +36,7 @@ CommandsAPI.cmdFailText = 'Virhe! Komennon ohje: ';
 
 CommandsAPI.otherwise = (msg, words, bot) => {
     let deferred = when.defer();
-    if(words.length < 2){
+    if(words.length < order + 1){
         deferred.resolve();
         return deferred.promise;
     }
@@ -43,8 +44,8 @@ CommandsAPI.otherwise = (msg, words, bot) => {
 
     let start = markov.findKeyFromData(words);
     let lottery = Math.random() * 10;
-    if(start && lottery > 7){
-        bot.sendMessage(msg.chat.id, start + ' ' + markov.generate(start, 20).join(' '));
+    if(start && lottery > 8){
+        bot.sendMessage(msg.chat.id, start + ' ' + markov.generate(start, 15).join(' '));
     }
 
     markov.seed(words);
