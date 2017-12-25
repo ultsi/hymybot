@@ -71,14 +71,19 @@ module.exports = (order) => {
     };
 
     markov.findPartialKeyFromData = (data) => {
-        let found = [];
+        let foundByKey = {};
         for (let i in data) {
             let point = data[i];
             if(m_partial_keys[point]){
-                found = found.concat(m_partial_keys[point]);
+                foundByKey[point] = m_partial_keys[point];
             }
         }
-        return found[Math.floor(Math.random()*found.length)];
+        let found = [];
+        for (let point in foundByKey) {
+            found.push(foundByKey[point]);
+        }
+        let foundKey = found[Math.floor(Math.random()*found.length)];
+        return foundKey[Math.floor(Math.random()*foundKey.length)];
     };
 
     markov.findExactKeyFromData = (data) => {
