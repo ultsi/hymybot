@@ -39,9 +39,10 @@ CommandsAPI.otherwise = (msg, words, bot) => {
     words = words.map(w => w.toLowerCase());
 
     let start = markov.findPartialKeyFromData(words);
+    let mention = words.find(w => w === '@hymybot');
     let lottery = Math.random();
     console.log(start, lottery);
-    if(start && lottery > 0.7){
+    if((start && lottery > 0.7) || (mention && start)){
         bot.sendMessage(msg.chat.id, start + ' ' + markov.generate(start, 15).join(' '));
     }
 
