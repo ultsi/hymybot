@@ -37,34 +37,35 @@ CommandsAPI.cmdFailText = 'Virhe! Komennon ohje: ';
 CommandsAPI.otherwise = (msg, words, bot) => {
     let deferred = when.defer();
     words = words.map(w => w.toLowerCase());
+    const mention = words.find(w => w === '@hymybot');
+    const groupId = msg.chat.id;
+    const isBot = msg.from.is_bot;
+    const forwardFrom = msg.forward_from;
 
     let start = markov.findPartialKeyFromData(words);
-    let mention = words.find(w => w === '@hymybot');
     let lottery = Math.random();
-    console.log(start, lottery);
+    console.log(msg);
     if((start && lottery > 0.7) || (mention && start)){
         bot.sendMessage(msg.chat.id, start + ' ' + markov.generate(start, 15).join(' '));
     }
 
-    // save the message to db
-    if(words.length < order + 1){
-        deferred.resolve();
-        return deferred.promise;
+    // save the message to db if meet requirements
+    if(words.length >= order + 1 && !mention && groupId === -123739540 && !isBot && !forwardFrom) {
+        markov.seed(words);
+
+        query('insert into msgs (msg) values ($1)', [words.join(markov.delimiter)])
+            .then(() => {
+                console.log('saved text ' + words.join(markov.delimiter));
+            }, (err) => {
+                console.log('error while saving message to db');
+                console.log(err);
+            });
+
     }
-
-    markov.seed(words);
-
-    query('insert into msgs (msg) values ($1)', [words.join(markov.delimiter)])
-        .then(() => {
-
-        }, (err) => {
-            console.log('error while saving message to db');
-            console.log(err);
-        });
-
 
     deferred.resolve();
     return deferred.promise;
+
 };
 
 /* seed the markov chain from db */
