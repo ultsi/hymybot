@@ -83,7 +83,12 @@ module.exports = (order) => {
             found.push(foundByKey[point]);
         }
         let foundKey = found[Math.floor(Math.random()*found.length)];
-        return foundKey[Math.floor(Math.random()*foundKey.length)];
+        
+        if (foundKey) {
+            return foundKey[Math.floor(Math.random()*foundKey.length)];
+        } else {
+            return false;
+        }
     };
 
     markov.findExactKeyFromData = (data) => {
