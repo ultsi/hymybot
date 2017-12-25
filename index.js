@@ -25,8 +25,8 @@
 
 const CommandsAPI = require('telegram-bot-cmd-api')(process.env.TOKEN, process.env.BOT_MODE, process.env.APP_URL);
 const when = require('when');
-const order = 2;
-const markov = require('./markov.js')(order);
+const MARKOV_ORDER = 2;
+const markov = require('./markov.js')(MARKOV_ORDER);
 const query = require('pg-query');
 query.connectionParameters = process.env.DATABASE_URL;
 
@@ -36,9 +36,14 @@ CommandsAPI.cmdFailText = 'Virhe! Komennon ohje: ';
 
 CommandsAPI.otherwise = (msg, words, bot) => {
     let deferred = when.defer();
+    const groupId = msg.chat.id;
+    if(groupId !== -123739540) {
+        deferred.resolve();
+        return deferred.promise;
+    }
+    
     words = words.map(w => w.toLowerCase());
     const mention = words.find(w => w === '@hymybot');
-    const groupId = msg.chat.id;
     const isBot = msg.from.is_bot;
     const forwardFrom = msg.forward_from;
 
@@ -50,7 +55,7 @@ CommandsAPI.otherwise = (msg, words, bot) => {
     }
 
     // save the message to db if meet requirements
-    if(words.length >= order + 1 && !mention && groupId === -123739540 && !isBot && !forwardFrom) {
+    if(words.length >= MARKOV_ORDER + 1 && !mention && !isBot && !forwardFrom) {
         markov.seed(words);
 
         query('insert into msgs (msg) values ($1)', [words.join(markov.delimiter)])
