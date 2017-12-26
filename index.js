@@ -53,9 +53,17 @@ CommandsAPI.otherwise = (msg, words, bot) => {
     if((start && lottery > 0.7) || (mention && start)){
         bot.sendMessage(msg.chat.id, start + ' ' + markov.generate(start, 15).join(' '));
     }
+    /* Remove occurrences of the bot name to avoid 3rd person talking of oneself */
+    while(words.find(x => x === 'hymybot')){
+        words.splice(words.indexOf('hymybot'), 1);
+    }
 
     // save the message to db if meet requirements
     if(words.length >= MARKOV_ORDER + 1 && !mention && !isBot && !forwardFrom) {
+
+        /* Remove mentions (@) to avoid highlights by bot */
+        words = words.map(x => x[0] === '@' ? x.substring(1) : x);
+
         markov.seed(words);
 
         query('insert into msgs (msg) values ($1)', [words.join(markov.delimiter)])
