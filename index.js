@@ -51,7 +51,14 @@ CommandsAPI.otherwise = (msg, words, bot) => {
     let lottery = Math.random();
     console.log(msg);
     if ((start && lottery > 0.7) ||  (mention && start)) {
-        bot.sendMessage(msg.chat.id, start + ' ' + markov.generate(start, 15).join(' '));
+        let text = start + ' ' + markov.generate(start, 15).join(' ');
+        // make text start with a capital letter and end in a period
+        text = text[0].toUpperCase() + text.substring(1);
+        if(text[text.length-1] !== '.') {
+            text += '.';
+        }
+        
+        bot.sendMessage(msg.chat.id, text);
     }
     /* Remove occurrences of the bot name to avoid 3rd person talking of oneself */
     while (words.find(x => x === 'hymybot')) {
