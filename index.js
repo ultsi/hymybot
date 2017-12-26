@@ -37,11 +37,11 @@ CommandsAPI.cmdFailText = 'Virhe! Komennon ohje: ';
 CommandsAPI.otherwise = (msg, words, bot) => {
     let deferred = when.defer();
     const groupId = msg.chat.id;
-    if(groupId !== -123739540) {
+    if (groupId !== -123739540) {
         deferred.resolve();
         return deferred.promise;
     }
-    
+
     words = words.map(w => w.toLowerCase());
     const mention = words.find(w => w === '@hymybot');
     const isBot = msg.from.is_bot;
@@ -50,16 +50,16 @@ CommandsAPI.otherwise = (msg, words, bot) => {
     let start = markov.findPartialKeyFromData(words);
     let lottery = Math.random();
     console.log(msg);
-    if((start && lottery > 0.7) || (mention && start)){
+    if ((start && lottery > 0.7) ||  (mention && start)) {
         bot.sendMessage(msg.chat.id, start + ' ' + markov.generate(start, 15).join(' '));
     }
     /* Remove occurrences of the bot name to avoid 3rd person talking of oneself */
-    while(words.find(x => x === 'hymybot')){
+    while (words.find(x => x === 'hymybot')) {
         words.splice(words.indexOf('hymybot'), 1);
     }
 
     // save the message to db if meet requirements
-    if(words.length >= MARKOV_ORDER + 1 && !mention && !isBot && !forwardFrom) {
+    if (words.length >= MARKOV_ORDER + 1 && !mention && !isBot && !forwardFrom) {
 
         /* Remove mentions (@) to avoid highlights by bot */
         words = words.map(x => x[0] === '@' ? x.substring(1) : x);
@@ -84,14 +84,14 @@ CommandsAPI.otherwise = (msg, words, bot) => {
 /* seed the markov chain from db */
 
 query('select msg from msgs')
-.then((res) => {
-    let msgs = res[0];
-    for(let i in msgs){
-        let words = msgs[i].msg.split(markov.delimiter);
-        markov.seed(words);
-    }
-    console.log('seeded with ' + msgs.length + ' messages');
-}, (err) => {
-    console.log('Error while seeding markov chain from db');
-    console.log(err);
-});
+    .then((res) => {
+        let msgs = res[0];
+        for (let i in msgs) {
+            let words = msgs[i].msg.split(markov.delimiter);
+            markov.seed(words);
+        }
+        console.log('seeded with ' + msgs.length + ' messages');
+    }, (err) => {
+        console.log('Error while seeding markov chain from db');
+        console.log(err);
+    });

@@ -24,28 +24,31 @@
 'use strict';
 
 module.exports = (order) => {
-    let markov = {order: order, delimiter: ' '};
+    let markov = {
+        order: order,
+        delimiter: ' '
+    };
     let m_keys = [];
     let m_partial_keys = {};
     let m_data = {};
 
     markov.seed = (data) => {
-        for(let i=0; i < data.length-order; i += 1){
-            let orderTuple = data.slice(i, i+order).join(markov.delimiter);
-            if(!m_data[orderTuple]) {
+        for (let i = 0; i < data.length - order; i += 1) {
+            let orderTuple = data.slice(i, i + order).join(markov.delimiter);
+            if (!m_data[orderTuple]) {
                 m_data[orderTuple] = [];
                 m_data._length += 1;
                 m_keys.push(orderTuple);
                 let orderKeys = orderTuple.split(markov.delimiter);
-                for(let k in orderKeys) {
+                for (let k in orderKeys) {
                     let partialKey = orderKeys[k];
-                    if(!m_partial_keys[partialKey]) {
+                    if (!m_partial_keys[partialKey]) {
                         m_partial_keys[partialKey] = [];
                     }
                     m_partial_keys[partialKey].push(orderTuple);
                 }
             }
-            m_data[orderTuple].push(data[i+order]);
+            m_data[orderTuple].push(data[i + order]);
         }
     };
 
@@ -53,9 +56,9 @@ module.exports = (order) => {
         let counter = 0;
         let generated = [];
         let nextKey = key;
-        while(m_data[nextKey] && counter < limit){
+        while (m_data[nextKey] && counter < limit) {
             counter += 1;
-            let nextItem = m_data[nextKey][Math.floor(Math.random()*m_data[nextKey].length)];
+            let nextItem = m_data[nextKey][Math.floor(Math.random() * m_data[nextKey].length)];
             generated.push(nextItem);
             if (order > 1) {
                 nextKey = nextKey.split(markov.delimiter).slice(1, markov.order).join(markov.delimiter) + markov.delimiter + nextItem;
@@ -67,34 +70,34 @@ module.exports = (order) => {
     };
 
     markov.randomKey = () => {
-        return m_keys[Math.floor(Math.random()*m_keys.length)];
+        return m_keys[Math.floor(Math.random() * m_keys.length)];
     };
 
     markov.findPartialKeyFromData = (data) => {
         let foundByKey = {};
         for (let i in data) {
             let point = data[i];
-            if(m_partial_keys[point]){
+            if (m_partial_keys[point]) {
                 foundByKey[point] = m_partial_keys[point];
             }
         }
         let found = [];
-        for (let point in foundByKey) {
+        for (let point in foundByKey)  {
             found.push(foundByKey[point]);
         }
-        let foundKey = found[Math.floor(Math.random()*found.length)];
-        
-        if (foundKey) {
-            return foundKey[Math.floor(Math.random()*foundKey.length)];
+        let foundKey = found[Math.floor(Math.random() * found.length)];
+
+        if (foundKey)  {
+            return foundKey[Math.floor(Math.random() * foundKey.length)];
         } else {
             return false;
         }
     };
 
     markov.findExactKeyFromData = (data) => {
-        for(let i=0; i < data.length-order; i += 1){
-            let orderTuple = data.slice(i, i+order).join(markov.delimiter);
-            if(m_data[orderTuple]){
+        for (let i = 0; i < data.length - order; i += 1) {
+            let orderTuple = data.slice(i, i + order).join(markov.delimiter);
+            if (m_data[orderTuple]) {
                 return orderTuple;
             }
         }
