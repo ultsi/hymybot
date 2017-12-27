@@ -50,11 +50,11 @@ CommandsAPI.otherwise = (msg, words, bot) => {
     let start = markov.findPartialKeyFromData(words);
     let lottery = Math.random();
     console.log(msg);
-    if ((start && lottery > 0.8) ||  (mention && start)) {
+    if ((start && lottery > 0.8 ) ||  (mention && start)) {
         let text = start + ' ' + markov.generate(start, 15).join(' ');
         // make text start with a capital letter and end in a period
         text = text[0].toUpperCase() + text.substring(1);
-        if(text[text.length-1] !== '.') {
+        if(text[text.length-1].match("/\w/g")) {
             text += '.';
         }
         
