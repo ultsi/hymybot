@@ -34,6 +34,11 @@ CommandsAPI.helpText = 'Moi, olen Hymybot. Olen käytettävissä vain HYMY-ryhm�
 CommandsAPI.privateCommandNoticeText = 'Käytä tätä komentoa vain minun kanssa!';
 CommandsAPI.cmdFailText = 'Virhe! Komennon ohje: ';
 
+const end_letters = ['.', '?', '!', '.', '?', '!', '.', '?', '!', '...', '!?', '???'];
+function randomEnding() {
+    return end_letters[Math.floor(Math.random()*end_letters.length)];
+}
+
 CommandsAPI.otherwise = (msg, words, bot) => {
     let deferred = when.defer();
     const groupId = msg.chat.id;
@@ -55,7 +60,7 @@ CommandsAPI.otherwise = (msg, words, bot) => {
         // make text start with a capital letter and end in a period
         text = text[0].toUpperCase() + text.substring(1);
         if (text[text.length - 1].match(/\w/g))  {
-            text += '.';
+            text += randomEnding();
         }
 
         bot.sendMessage(msg.chat.id, text);
