@@ -34,7 +34,7 @@ CommandsAPI.helpText = 'Moi, olen Hymybot. Olen k채ytett채viss채 vain HYMY-ryhm�
 CommandsAPI.privateCommandNoticeText = 'K채yt채 t채t채 komentoa vain minun kanssa!';
 CommandsAPI.cmdFailText = 'Virhe! Komennon ohje: ';
 
-const end_letters = ['.', '?', '!', '.', '?', '!', '.', '?', '!', '...', '!?', '???'];
+const end_letters = ['.', '?', '!', '.', '?', '!', '.', '?', '!', '...', '!?', '???', " :D", " xD"];
 function randomEnding() {
     return end_letters[Math.floor(Math.random()*end_letters.length)];
 }
