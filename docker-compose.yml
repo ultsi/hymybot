@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+  hymybot:
+    container_name: hymybot
+    build: .
+    volumes:
+      - .:/app/hymybot
+    networks:
+      - db
+    restart: always
+    env_file: .env_docker
+
+networks:
+  db:
+    driver: bridge
