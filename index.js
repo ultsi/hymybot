@@ -65,10 +65,6 @@ CommandsAPI.otherwise = (msg, words, bot) => {
 
         bot.sendMessage(msg.chat.id, text);
     }
-    /* Remove occurrences of the bot name to avoid 3rd person talking of oneself */
-    while (words.find(x => x === 'hymybot')) {
-        words.splice(words.indexOf('hymybot'), 1);
-    }
 
     // save the message to db if meet requirements
     if (words.length >= MARKOV_ORDER + 1 && !mention && !isBot && !forwardFrom) {
